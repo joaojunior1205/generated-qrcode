@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres
+    container_name: db
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - ../db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=$USER_DATABASE
+      - POSTGRES_PASSWORD=$PASSWORD_DATABASE
+      - POSTGRES_DB=$NAME_DATABASE
+    networks:
+      - backend
+
+  backend:
+    build: .
+    container_name: backend
+    depends_on:
+      - db
+    command: npm start
+    ports:
+      - "3001:3001"
+    volumes:
+      - ../backend:/user/app
+    links:
+      - db
+    networks:
+      - backend
+
+networks:
+  backend:
+    external: true
